@@ -2,28 +2,51 @@
 
 require_once "vendor/autoload.php";
 
+//////////////////////////////////////
+//// ------- BOT HANDLING ------- ////
+//////////////////////////////////////
 
-// get events
+// bot
+$token = '271222864:AAF0lHLfYlI0gHEnNXHbq7r15pjC3h0uuc4';
+$bot = new \TelegramBot\Api\BotApi($token);
+
+// create message
 $message = "";
 foreach (getLinks() as $link) {
   $message = $message . getContent($link, $message);
 }
 
-// parameters
-$token = '271222864:AAF0lHLfYlI0gHEnNXHbq7r15pjC3h0uuc4';
-$chatId = 73892561;
+// get subscriptions (only groups => true)
+$subIDs = getSubs($bot, true);
 
-// create bot
-$bot = new \TelegramBot\Api\BotApi($token);
-
-// get subscriptions
-foreach($bot->getUpdates() as $noob) {
-  #var_dump ($noob->getMessage()->getFrom()->getFirstName());
+// send message to all subs
+if ($message != "") {
+  foreach ($subIDs as $subID) {
+    $bot->sendMessage($subID, $message, 'markdown');
+  }
 }
 
-// send message
-if ($message != "") {
-  $bot->sendMessage($chatId, $message, 'markdown');
+
+/////////////////////////////////////
+//// -------- FUNCTIONS -------- ////
+/////////////////////////////////////
+
+function getSubs($bot, $onlyGroups) {
+  $subIDs = array();
+  foreach($bot->getUpdates() as $noob) {
+    $id = $noob->getMessage()->getChat()->getId();
+    if (!(in_array($id, $subIDs))) {
+      if ($onlyGroups) {
+        if ($noob->getMessage()->getChat()->getType() == "group") {
+          array_push($subIDs, $id);
+        }
+      } else {
+        array_push($subIDs, $id);
+      }
+    }
+  }
+
+  return $subIDs;
 }
 
 /**
