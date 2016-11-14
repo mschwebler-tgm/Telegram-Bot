@@ -4,8 +4,9 @@ require_once "vendor/autoload.php";
 
 
 // get events
-$message = "";
+$message = "Test";
 foreach (getLinks() as $link) {
+  break;
   $message = $message . getContent($link, $message);
 }
 
@@ -18,6 +19,12 @@ $messageText = "*Test*";
 // create bot
 $bot = new \TelegramBot\Api\BotApi($token);
 
+// get subscriptions
+foreach($bot->getUpdates() as $noob) {
+  #$vars = array get_object_vars($noob);
+  var_dump ($noob->getMessage()->getFrom()->getFirstName());
+}
+
 // send message
 $bot->sendMessage($chatId, $message, $parse_mode);
 
@@ -29,7 +36,7 @@ function getLinks()
   // get html data
   $ch = curl_init("https://www.smitegame.com/category/events/");
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_BINARYTRANSFER, true)
+  curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
   $content = curl_exec($ch);
   curl_close($ch);
 
