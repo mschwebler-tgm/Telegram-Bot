@@ -4,33 +4,31 @@ require_once "vendor/autoload.php";
 
 
 // get events
-$message = "Test";
+$message = "";
 foreach (getLinks() as $link) {
-  break;
   $message = $message . getContent($link, $message);
 }
 
 // parameters
 $token = '271222864:AAF0lHLfYlI0gHEnNXHbq7r15pjC3h0uuc4';
 $chatId = 73892561;
-$parse_mode = 'markdown';
-$messageText = "*Test*";
 
 // create bot
 $bot = new \TelegramBot\Api\BotApi($token);
 
 // get subscriptions
 foreach($bot->getUpdates() as $noob) {
-  #$vars = array get_object_vars($noob);
-  var_dump ($noob->getMessage()->getFrom()->getFirstName());
+  #var_dump ($noob->getMessage()->getFrom()->getFirstName());
 }
 
 // send message
-$bot->sendMessage($chatId, $message, $parse_mode);
+if ($message != "") {
+  $bot->sendMessage($chatId, $message, 'markdown');
+}
 
 /**
  * This function returns all links to current events in an array
- */ 
+ */
 function getLinks()
 {
   // get html data
@@ -46,20 +44,47 @@ function getLinks()
   preg_match_all($pattern, $content, $matches);
 
 
-  // put links into array
+  // check for new links
   $links = array();
-  foreach ($matches[0] as $event) {
-    $arr = explode('"', $event);
-    array_push($links, $arr[3]);
+  $conn = connectDB();
+  $sql = "SELECT link FROM events";
+  $result = (mysqli_query($conn, $sql));
+  $dbLinks = array();
+  // save links to array
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      array_push($dbLinks, $row["link"]);
+    }
   }
 
-  // return array
+  foreach ($matches[0] as $event) {
+    //get link
+    $arr = explode('"', $event);
+    $link = $arr[3];
+
+    // match current link with links in database
+    if (!(in_array($link, $dbLinks))) {
+      // if not in database: add to links + save to database
+      array_push($links, $link);
+      $sql = "INSERT into events VALUES('" . $link . "')";
+      if ($conn->query($sql) === TRUE) {
+        // New record created successfully
+      } else {
+        // Error
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
+    }
+  }
+  closeDB($conn);
+
+  // return array to be sent
   return $links;
 }
 
 /**
  * Returns the content of a single event (Title, Description and Date)
- */ 
+ */
 function getContent($link) {
   // get html data from a single event
   $ch = curl_init($link);
@@ -107,28 +132,28 @@ function get_string_between($string, $start, $end){
   return substr($string, $ini, $len);
 }
 
-function db()
+function connectDB()
 {
   $servername = "localhost";
   $username = "root";
   $password = "raspberry";
-  $dbname = "myDB";
+  $dbname = "smiteBot";
 
-// Create connection
+  // Create connection
   $conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
+  // Check connection
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
 
-  $sql = "INSERT INTO MyGuests (firstname, lastname, email) VALUES ('John', 'Doe', 'john@example.com')";
+  return $conn;
+}
 
-  if ($conn->query($sql) === TRUE) {
-    echo "New record created successfully";
-  } else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
-  }
 
+
+
+
+function closeDB($conn) {
   $conn->close();
 }
 
