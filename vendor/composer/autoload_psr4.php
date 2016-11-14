@@ -6,10 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'unreal4u\\TelegramAPI\\' => array($vendorDir . '/unreal4u/telegram-api/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
-    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
-    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
-    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
-    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
+    'TelegramBot\\Api\\' => array($vendorDir . '/telegram-bot/api/src'),
 );
