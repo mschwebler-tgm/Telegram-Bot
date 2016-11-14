@@ -1,0 +1,40 @@
+{
+  "name": "unreal4u/telegram-api",
+  "description": "A complete Telegram bot API implementation written in PHP, with support for inline bots!",
+  "keywords": [
+    "Telegram",
+    "API",
+    "Telegram Bot"
+  ],
+  "authors": [
+    {
+      "name": "Camilo Sperberg",
+      "email": "me@unreal4u.com",
+      "homepage": "https://github.com/unreal4u/telegram-api/graphs/contributors"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "guzzlehttp/guzzle": "~6.0",
+    "psr/log": "~1.0"
+  },
+  "require-dev": {
+    "monolog/monolog": "~1.17",
+    "squizlabs/php_codesniffer": "@stable",
+    "jakub-onderka/php-parallel-lint": "^0.9.0",
+    "phpmd/phpmd": "@stable",
+    "phpunit/phpunit": "@stable",
+    "phpunit/php-code-coverage": "~3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "unreal4u\\TelegramAPI\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tests\\": "tests"
+    }
+  },
+  "license": "MIT"
+}

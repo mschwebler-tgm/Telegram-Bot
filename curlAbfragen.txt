@@ -1,0 +1,3 @@
+curl -X POST https://api.telegram.org/bot271222864:AAF0lHLfYlI0gHEnNXHbq7r15pjC3h0uuc4/getUpdates
+
+curl -X POST 'https://api.telegram.org/bot271222864:AAF0lHLfYlI0gHEnNXHbq7r15pjC3h0uuc4/sendMessage?chat_id=73892561&text=test'
